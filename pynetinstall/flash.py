@@ -220,7 +220,7 @@ class Flasher:
         try:
             self.state = [0, 0]
             if info.magic:
-                self.do(b"OFFR\n"+info.magic+bytes([0x0A, 0x0A, 0x0A, 0x00]), b"YACK\n")
+                self.do(b"OFFR\n%b\n\n\n\0" % info.magic, b"YACK\n")
             else:
                 self.do(b"OFFR\n\n", b"YACK\n")
         # Errno 101 Network is unreachable
