@@ -25,13 +25,14 @@ class InterfaceInfo:
     from_data(bytes) -> InterfaceInfo
         Returns an object of InterfaceInfo from bytes that are received from the Interface
     """
-    def __init__(self, mac: bytes, model: str, arch: str, min_os: str, lic_id: str = None, lic_key: str = None):
+    def __init__(self, mac: bytes, model: str, arch: str, min_os: str, lic_id: str = None, lic_key: str = None, magic=None):
         self.mac = mac
         self.model = model
         self.arch = arch
         self.min_os = min_os
         self.lic_id = lic_id
         self.lic_key = lic_key
+        self.magic = magic
 
     @classmethod
     def from_data(cls, data: bytes) -> object:
@@ -52,9 +53,11 @@ class InterfaceInfo:
         mac = data[:6]
         rows = data[20:].split(b"\n") # Interface sends 6 bytes of the MAC Address and 14 more unused bytes
         rows.remove(rows[0]) # Remove the first unused information
+        magic = rows[1]
         rows = list(map(lambda x: x.decode(), rows))
         return cls(
             mac,
             *rows[2:5], # Model, Architecture, minOS
-            *rows[0:2]  # License ID, License Key
+            *rows[0:2],  # License ID, License Key
+            magic=magic # ?? Required in OFFR
             )

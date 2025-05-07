@@ -219,7 +219,10 @@ class Flasher:
         self.logger.debug("Sending the offer to flash")
         try:
             self.state = [0, 0]
-            self.do(b"OFFR\n\n", b"YACK\n")
+            if info.magic:
+                self.do(b"OFFR\n"+info.magic+bytes([0x0A, 0x0A, 0x0A, 0x00]), b"YACK\n")
+            else:
+                self.do(b"OFFR\n\n", b"YACK\n")
         # Errno 101 Network is unreachable
         except OSError as e:
             raise AbortFlashing(f"Network error: {e}")
